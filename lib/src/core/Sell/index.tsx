@@ -47,6 +47,7 @@ export const Sell: React.FC<SellProps> = ({
   );
 
   const walletPublicKey = wallet?.publicKey;
+  const candyShopAddress = candyShop.candyShopAddress.toString();
 
   const fetchWalletNFTs = useCallback(
     (walletPublicKey, connection) => {
@@ -71,29 +72,27 @@ export const Sell: React.FC<SellProps> = ({
           setLoadingStatus(LoadStatus.Loaded);
         });
     },
-    [walletPublicKey]
+    [candyShop]
   );
 
   const fetchOrders = useCallback(
     (walletPublicKey) => {
       fetchOrdersByStoreIdAndWalletAddress(
-        candyShop.candyShopAddress.toString(),
+        candyShopAddress,
         walletPublicKey.toString()
       ).then((sellOrders) => {
         setSellOrders(sellOrders);
       });
     },
-    [walletPublicKey]
+    [candyShopAddress]
   );
 
   useEffect(() => {
     if (!connection || !walletPublicKey || !candyShop) return;
 
-    if (loadingStatus === LoadStatus.ToLoad) {
-      fetchWalletNFTs(walletPublicKey, connection);
-      fetchOrders(walletPublicKey);
-    }
-  }, [connection, walletPublicKey, candyShop]);
+    fetchWalletNFTs(walletPublicKey, connection);
+    fetchOrders(walletPublicKey);
+  }, [connection, walletPublicKey, candyShop, fetchWalletNFTs, fetchOrders]);
 
   const hashSellOrders: any = useMemo(() => {
     return (
